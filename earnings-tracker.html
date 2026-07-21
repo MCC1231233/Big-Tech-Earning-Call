@@ -1,0 +1,397 @@
+<title>2026 어닝 트래커 · AI Capex ↔ HBM/메모리</title>
+<style>
+  :root {
+    --bg: #F5F7FA;
+    --surface: #FFFFFF;
+    --surface-2: #FAFBFD;
+    --ink: #111420;
+    --ink-soft: #363B4C;
+    --muted: #5C6274;
+    --border: #E3E7EF;
+    --border-strong: #CDD3E0;
+    --accent: #3B44D8;
+    --accent-soft: #EEF0FE;
+    --pos: #0E8C5A;
+    --pos-soft: #E5F5EE;
+    --neg: #CE3B3B;
+    --neg-soft: #FBEBEB;
+    --pend: #A9731A;
+    --pend-soft: #FBF2DF;
+    --shadow: 0 1px 2px rgba(17,20,32,.04), 0 8px 24px rgba(17,20,32,.05);
+    --font-body: -apple-system, "Segoe UI", Roboto, "Malgun Gothic", "Apple SD Gothic Neo", system-ui, sans-serif;
+    --font-mono: "Cascadia Code", "SF Mono", ui-monospace, "Consolas", "D2Coding", monospace;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #0B0D13;
+      --surface: #13161F;
+      --surface-2: #171B26;
+      --ink: #EAECF4;
+      --ink-soft: #C3C8D8;
+      --muted: #888FA3;
+      --border: #242938;
+      --border-strong: #333A4D;
+      --accent: #7A87FF;
+      --accent-soft: #1B2039;
+      --pos: #37C98D;
+      --pos-soft: #10241D;
+      --neg: #FF6E6E;
+      --neg-soft: #2A1618;
+      --pend: #E2AC46;
+      --pend-soft: #2A2213;
+      --shadow: 0 1px 2px rgba(0,0,0,.3), 0 10px 30px rgba(0,0,0,.35);
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #0B0D13; --surface: #13161F; --surface-2: #171B26; --ink: #EAECF4;
+    --ink-soft: #C3C8D8; --muted: #888FA3; --border: #242938; --border-strong: #333A4D;
+    --accent: #7A87FF; --accent-soft: #1B2039; --pos: #37C98D; --pos-soft: #10241D;
+    --neg: #FF6E6E; --neg-soft: #2A1618; --pend: #E2AC46; --pend-soft: #2A2213;
+    --shadow: 0 1px 2px rgba(0,0,0,.3), 0 10px 30px rgba(0,0,0,.35);
+  }
+  :root[data-theme="light"] {
+    --bg: #F5F7FA; --surface: #FFFFFF; --surface-2: #FAFBFD; --ink: #111420;
+    --ink-soft: #363B4C; --muted: #5C6274; --border: #E3E7EF; --border-strong: #CDD3E0;
+    --accent: #3B44D8; --accent-soft: #EEF0FE; --pos: #0E8C5A; --pos-soft: #E5F5EE;
+    --neg: #CE3B3B; --neg-soft: #FBEBEB; --pend: #A9731A; --pend-soft: #FBF2DF;
+    --shadow: 0 1px 2px rgba(17,20,32,.04), 0 8px 24px rgba(17,20,32,.05);
+  }
+
+  * { box-sizing: border-box; }
+  body {
+    background: var(--bg); color: var(--ink); font-family: var(--font-body);
+    line-height: 1.6; -webkit-font-smoothing: antialiased; margin: 0;
+  }
+  .wrap { max-width: 1060px; margin: 0 auto; padding: 0 24px 96px; }
+
+  /* Header */
+  header.masthead {
+    position: sticky; top: 0; z-index: 20;
+    background: color-mix(in srgb, var(--bg) 88%, transparent);
+    backdrop-filter: saturate(1.2) blur(10px);
+    border-bottom: 1px solid var(--border);
+  }
+  .masthead-inner { max-width: 1060px; margin: 0 auto; padding: 16px 24px; display: flex; flex-wrap: wrap; align-items: baseline; gap: 6px 16px; }
+  .eyebrow { font-family: var(--font-mono); font-size: 11px; letter-spacing: .14em; text-transform: uppercase; color: var(--accent); font-weight: 600; }
+  .masthead h1 { font-size: 18px; font-weight: 700; letter-spacing: -.01em; margin: 0; flex: 1 1 auto; }
+  .updated { font-family: var(--font-mono); font-size: 11px; color: var(--muted); }
+
+  .hero { padding: 48px 0 8px; }
+  .hero .kicker { font-family: var(--font-mono); font-size: 12px; letter-spacing: .12em; text-transform: uppercase; color: var(--muted); margin-bottom: 14px; }
+  .hero h2 { font-size: clamp(28px, 5vw, 44px); line-height: 1.08; letter-spacing: -.025em; font-weight: 800; margin: 0 0 18px; text-wrap: balance; }
+  .hero h2 .hl { color: var(--accent); }
+  .lead { font-size: 17px; color: var(--ink-soft); max-width: 62ch; }
+
+  .callout { margin: 24px 0 8px; padding: 14px 18px; border-radius: 10px; background: var(--pend-soft); border: 1px solid color-mix(in srgb, var(--pend) 32%, transparent); font-size: 14px; color: var(--ink-soft); }
+  .callout b { color: var(--ink); }
+
+  /* Legend */
+  .legend { display: flex; flex-wrap: wrap; gap: 8px; margin: 20px 0 0; }
+
+  /* Chips */
+  .chip { font-family: var(--font-mono); font-size: 11.5px; font-weight: 600; padding: 3px 10px; border-radius: 999px; display: inline-flex; align-items: center; gap: 5px; white-space: nowrap; }
+  .chip.done { background: var(--pos-soft); color: var(--pos); }
+  .chip.pend { background: var(--pend-soft); color: var(--pend); }
+  .chip.neu  { background: var(--accent-soft); color: var(--accent); }
+
+  /* Section */
+  section { margin-top: 56px; scroll-margin-top: 72px; }
+  .sec-head { display: flex; align-items: baseline; gap: 12px; border-bottom: 2px solid var(--ink); padding-bottom: 10px; margin-bottom: 6px; }
+  .sec-num { font-family: var(--font-mono); font-size: 13px; color: var(--accent); font-weight: 700; }
+  .sec-head h3 { font-size: 22px; font-weight: 750; letter-spacing: -.01em; margin: 0; }
+  .sec-sub { color: var(--muted); font-size: 14px; margin: 10px 0 22px; max-width: 66ch; }
+
+  /* Table */
+  .table-scroll { overflow-x: auto; border: 1px solid var(--border); border-radius: 12px; box-shadow: var(--shadow); }
+  table { border-collapse: collapse; width: 100%; font-size: 14px; background: var(--surface); }
+  thead th { background: var(--surface-2); text-align: left; font-family: var(--font-mono); font-size: 11px; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); font-weight: 600; padding: 11px 14px; border-bottom: 1px solid var(--border); white-space: nowrap; }
+  tbody td { padding: 12px 14px; border-bottom: 1px solid var(--border); vertical-align: top; }
+  tbody tr:last-child td { border-bottom: none; }
+  tbody tr:hover { background: var(--surface-2); }
+  td.num, th.num { font-family: var(--font-mono); font-variant-numeric: tabular-nums; text-align: right; white-space: nowrap; }
+  .co { font-weight: 700; }
+  .date-cell { font-family: var(--font-mono); font-variant-numeric: tabular-nums; white-space: nowrap; color: var(--ink-soft); }
+
+  /* Card grid */
+  .cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 16px; margin-top: 8px; }
+  .card { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 20px; box-shadow: var(--shadow); display: flex; flex-direction: column; gap: 14px; }
+  .card.wide { grid-column: 1 / -1; }
+  .card-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 10px; }
+  .card-top h4 { margin: 0; font-size: 17px; font-weight: 750; letter-spacing: -.01em; }
+  .card-top .tick { font-family: var(--font-mono); font-size: 11px; color: var(--muted); }
+  .card-date { font-family: var(--font-mono); font-size: 12px; color: var(--ink-soft); }
+
+  .metrics { display: grid; grid-template-columns: 1fr 1fr; gap: 1px; background: var(--border); border: 1px solid var(--border); border-radius: 10px; overflow: hidden; }
+  .metric { background: var(--surface); padding: 10px 12px; }
+  .metric .k { font-family: var(--font-mono); font-size: 10.5px; letter-spacing: .05em; text-transform: uppercase; color: var(--muted); }
+  .metric .v { font-family: var(--font-mono); font-variant-numeric: tabular-nums; font-size: 16px; font-weight: 700; margin-top: 2px; letter-spacing: -.01em; }
+  .metric .v small { font-size: 11px; font-weight: 500; color: var(--muted); }
+  .metric .v.up { color: var(--pos); }
+  .metric .v.down { color: var(--neg); }
+
+  .card p { margin: 0; font-size: 13.5px; color: var(--ink-soft); }
+  .card .note-label { font-family: var(--font-mono); font-size: 10.5px; letter-spacing: .06em; text-transform: uppercase; color: var(--accent); font-weight: 600; display: block; margin-bottom: 3px; }
+  ul.pts { margin: 0; padding-left: 18px; font-size: 13.5px; color: var(--ink-soft); }
+  ul.pts li { margin: 4px 0; }
+
+  /* Insight blocks */
+  .insights { display: grid; gap: 12px; grid-template-columns: 1fr; margin-top: 8px; }
+  .insight { display: flex; gap: 14px; background: var(--surface); border: 1px solid var(--border); border-left: 3px solid var(--accent); border-radius: 10px; padding: 16px 18px; box-shadow: var(--shadow); }
+  .insight .n { font-family: var(--font-mono); font-size: 22px; font-weight: 800; color: var(--accent); line-height: 1; opacity: .5; }
+  .insight .txt { font-size: 14px; color: var(--ink-soft); }
+  .insight .txt b { color: var(--ink); }
+
+  /* Changelog */
+  .log { border-left: 2px solid var(--border-strong); margin-left: 6px; padding-left: 20px; display: flex; flex-direction: column; gap: 18px; }
+  .log-item { position: relative; }
+  .log-item::before { content: ""; position: absolute; left: -26px; top: 5px; width: 9px; height: 9px; border-radius: 999px; background: var(--accent); box-shadow: 0 0 0 3px var(--bg); }
+  .log-item .ver { font-family: var(--font-mono); font-size: 12px; font-weight: 700; color: var(--ink); }
+  .log-item .ver span { color: var(--muted); font-weight: 500; margin-left: 8px; }
+  .log-item p { margin: 4px 0 0; font-size: 13.5px; color: var(--ink-soft); }
+
+  footer { margin-top: 64px; padding-top: 24px; border-top: 1px solid var(--border); font-size: 12.5px; color: var(--muted); }
+  footer .srcs { display: flex; flex-direction: column; gap: 5px; margin-top: 10px; }
+  footer a { color: var(--accent); text-decoration: none; }
+  footer a:hover { text-decoration: underline; }
+  .disc { margin-top: 18px; font-size: 11.5px; line-height: 1.5; }
+
+  a:focus-visible, .chip:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 4px; }
+  @media (max-width: 560px) { .metrics { grid-template-columns: 1fr; } .hero { padding-top: 32px; } }
+</style>
+
+<header class="masthead">
+  <div class="masthead-inner">
+    <span class="eyebrow">Invest · DD Tracker</span>
+    <h1>분기 어닝 트래커 — AI Capex ↔ HBM/메모리</h1>
+    <span class="updated">Updated 2026-07-21 · CY2026 Q2</span>
+  </div>
+</header>
+
+<div class="wrap">
+
+  <div class="hero">
+    <div class="kicker">Big Tech Earnings × Korea Memory Supercycle</div>
+    <h2>빅테크 <span class="hl">AI Capex $725B</span>가 밀어올린<br>메모리 슈퍼사이클, 분기별 추적</h2>
+    <p class="lead">미국 빅테크(Magnificent 7 + AI·반도체 핵심 4사)와 삼성전자·SK하이닉스의 분기 실적을 AI 데이터센터 투자와 HBM/메모리 수요의 연결고리 관점에서 정리합니다. 발표될 때마다 이어붙는 살아있는 문서입니다.</p>
+
+    <div class="callout">
+      🗓️ <b>현재 상태(2026-07-21):</b> CY2026 Q2 실적 시즌 초입입니다. <b>발표 완료</b>는 삼성전자 잠정실적(7/7)뿐이며, SK하이닉스·미국 빅테크는 <b>7/22부터 순차 발표</b>됩니다. 미발표 기업은 컨센서스·가이던스·관전포인트로 채우고, 발표 시 실측치로 교체합니다.
+    </div>
+
+    <div class="legend">
+      <span class="chip done">✅ 발표 완료</span>
+      <span class="chip pend">🕒 발표 전 (컨센/프리뷰)</span>
+      <span class="chip neu">↕ 전분기 대비</span>
+    </div>
+  </div>
+
+  <!-- ============ CALENDAR ============ -->
+  <section id="calendar">
+    <div class="sec-head"><span class="sec-num">00</span><h3>실적발표 캘린더</h3></div>
+    <p class="sec-sub">CY2026 Q2(4~6월) 발표 일정. 미국 빅테크 본체는 7/22 Alphabet을 시작으로 8월 하순 Nvidia까지 이어집니다.</p>
+    <div class="table-scroll">
+      <table>
+        <thead><tr><th>날짜</th><th>기업</th><th>구분</th><th>상태</th></tr></thead>
+        <tbody>
+          <tr><td class="date-cell">07-07</td><td class="co">삼성전자</td><td>잠정실적 (확정 컨콜 7/30)</td><td><span class="chip done">완료</span></td></tr>
+          <tr><td class="date-cell">07-22</td><td class="co">Alphabet</td><td>Mag7 / 하이퍼스케일러</td><td><span class="chip pend">예정</span></td></tr>
+          <tr><td class="date-cell">07-23</td><td class="co">Tesla</td><td>Mag7</td><td><span class="chip pend">예정</span></td></tr>
+          <tr><td class="date-cell">07-23~29</td><td class="co">SK하이닉스</td><td>메모리 (공식일 미확정)</td><td><span class="chip pend">예정</span></td></tr>
+          <tr><td class="date-cell">07-29</td><td class="co">Microsoft</td><td>Mag7 / 하이퍼스케일러</td><td><span class="chip pend">예정</span></td></tr>
+          <tr><td class="date-cell">07-29</td><td class="co">Meta</td><td>Mag7 / 하이퍼스케일러</td><td><span class="chip pend">예정</span></td></tr>
+          <tr><td class="date-cell">07-30</td><td class="co">Apple</td><td>Mag7</td><td><span class="chip pend">예정</span></td></tr>
+          <tr><td class="date-cell">07-30</td><td class="co">Amazon</td><td>Mag7 / 하이퍼스케일러</td><td><span class="chip pend">예정</span></td></tr>
+          <tr><td class="date-cell">07-30</td><td class="co">삼성전자</td><td>확정 실적 컨퍼런스콜</td><td><span class="chip pend">예정</span></td></tr>
+          <tr><td class="date-cell">~08-26</td><td class="co">Nvidia</td><td>Mag7 / AI 핵심 (분기 시차)</td><td><span class="chip pend">예정</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- ============ THEME: CAPEX ============ -->
+  <section id="capex">
+    <div class="sec-head"><span class="sec-num">01</span><h3>핵심 테마 · 빅테크 AI Capex</h3></div>
+    <p class="sec-sub">4대 하이퍼스케일러 2026년 설비투자 합산 <b>≈$725B, 전년 대비 +77%</b>(2025 $410B). 이 투자가 곧 삼성·SK하이닉스 HBM/DRAM 수요의 원천이며, 이번 시즌의 최대 관전 포인트는 "이 지출이 지속 가능한가"입니다.</p>
+    <div class="table-scroll">
+      <table>
+        <thead><tr><th>기업</th><th class="num">2026 Capex 가이던스</th><th class="num">2025 대비</th><th>메모</th></tr></thead>
+        <tbody>
+          <tr><td class="co">Amazon (AWS)</td><td class="num">~$200B</td><td class="num">대폭↑</td><td>Q1 $44.2B 집행, AWS +28%</td></tr>
+          <tr><td class="co">Microsoft</td><td class="num">~$190B</td><td class="num">컨센 $152B 상회</td><td>Azure AI 수요</td></tr>
+          <tr><td class="co">Alphabet</td><td class="num">$175–190B</td><td class="num">~$85B→2배+</td><td>데이터센터·TPU, Cloud 백로그 ~$460B</td></tr>
+          <tr><td class="co">Meta</td><td class="num">$115–145B</td><td class="num">↑ (상향)</td><td>메모리價·DC 비용 반영해 상향</td></tr>
+          <tr><td class="co" style="border-top:2px solid var(--border-strong)">합산 (4사)</td><td class="num" style="border-top:2px solid var(--border-strong)">≈$725B</td><td class="num" style="border-top:2px solid var(--border-strong)">+77%</td><td style="border-top:2px solid var(--border-strong)">2025 $410B → 2026 $725B</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- ============ KOREA MEMORY ============ -->
+  <section id="korea">
+    <div class="sec-head"><span class="sec-num">02</span><h3>한국 메모리 — 슈퍼사이클의 실체</h3></div>
+    <p class="sec-sub">Citi 기준 CY2026 Q2 <b>DRAM ASP +44% QoQ, NAND +53% QoQ</b>. AI 데이터센터 HBM 수요가 견인. 삼성은 잠정 사상최대, SK하이닉스는 HBM 고정가(LTA) 구조가 관전 포인트.</p>
+    <div class="cards">
+
+      <div class="card">
+        <div class="card-top">
+          <div><h4>삼성전자</h4><span class="tick">005930.KS · 잠정 7/7</span></div>
+          <span class="chip done">✅ 발표</span>
+        </div>
+        <div class="metrics">
+          <div class="metric"><div class="k">영업이익 (잠정)</div><div class="v up">89.4조원</div></div>
+          <div class="metric"><div class="k">YoY</div><div class="v up">≈ +19배</div></div>
+          <div class="metric"><div class="k">매출 (잠정)</div><div class="v">~171조원</div></div>
+          <div class="metric"><div class="k">컨센 대비</div><div class="v">OP 상회 / 매출 소폭 하회</div></div>
+        </div>
+        <p><span class="note-label">Comment</span>3개 분기 연속 최대. 이 한 분기 영업이익이 2023–2025년 합계를 상회, 분기 OP 기준 엔비디아·애플 일시 추월. HBM4·SOCAMM2 세계 최초 양산 출하 개시.</p>
+        <p><span class="note-label">주가 반응</span><b style="color:var(--neg)">−7%</b> — 연초 이후 ~150% 급등에 호재 선반영("perfection priced in"), 매출 미스, 향후 capex·AI 지속성 우려. 시총 $80B+ 증발.</p>
+        <ul class="pts"><li>7/30 확정 컨콜: 부문별(메모리/파운드리/DX)·하반기 가이던스 확인 필요</li></ul>
+      </div>
+
+      <div class="card">
+        <div class="card-top">
+          <div><h4>SK하이닉스</h4><span class="tick">000660.KS · 7/23~29 예정</span></div>
+          <span class="chip pend">🕒 발표 전</span>
+        </div>
+        <div class="metrics">
+          <div class="metric"><div class="k">영업이익 (컨센)</div><div class="v">~65조원</div></div>
+          <div class="metric"><div class="k">레인지</div><div class="v">60–70조</div></div>
+          <div class="metric"><div class="k">영업이익률(관측)</div><div class="v">~74.6%</div></div>
+          <div class="metric"><div class="k">상태</div><div class="v"><small>발표 전 · 프리뷰</small></div></div>
+        </div>
+        <p><span class="note-label">관전 포인트 · HBM의 양날</span>장기공급계약(LTA) <b>고정가</b> 구조 → 일반 DRAM(+~30% QoQ)·NAND(+~50%) 급등분을 blended ASP에 온전히 반영 못 함. "컨센 하회" 하향 리포트에 주가 하루 −12% 급락 사례. 단기 가격탄력성↓ 대신 장기 공급 안정성↑.</p>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ============ US BIG TECH ============ -->
+  <section id="bigtech">
+    <div class="sec-head"><span class="sec-num">03</span><h3>미국 빅테크 — Mag7 + AI 핵심</h3></div>
+    <p class="sec-sub">대부분 <b>발표 전</b>. 아래는 컨센서스·가이던스·관전포인트이며, 발표되는 순서(7/22 Alphabet →)대로 실측치·컨콜 코멘트로 교체됩니다. 공통 화두는 <b>Capex 지속성 vs 마진</b>.</p>
+    <div class="cards">
+
+      <div class="card">
+        <div class="card-top">
+          <div><h4>Alphabet</h4><span class="tick">GOOGL · 07/22 (첫 시그널)</span></div>
+          <span class="chip pend">🕒 발표 전</span>
+        </div>
+        <div class="metrics">
+          <div class="metric"><div class="k">매출 (컨센)</div><div class="v">$117–120B</div></div>
+          <div class="metric"><div class="k">Cloud 성장</div><div class="v">~+63%</div></div>
+          <div class="metric"><div class="k">2026 Capex</div><div class="v">$175–190B</div></div>
+          <div class="metric"><div class="k">Cloud 백로그</div><div class="v">~$462B</div></div>
+        </div>
+        <p><span class="note-label">Watch</span>가동률(capacity utilization)·백로그 전환율·AI attach rate. capex 상향 시 HBM 수요 상방 확인, 신중론 시 메모리주 부담. AI 재원으로 $80B 지분 조달.</p>
+      </div>
+
+      <div class="card">
+        <div class="card-top"><div><h4>Microsoft</h4><span class="tick">MSFT · 07/29</span></div><span class="chip pend">🕒 발표 전</span></div>
+        <div class="metrics">
+          <div class="metric"><div class="k">2026 Capex</div><div class="v">~$190B</div></div>
+          <div class="metric"><div class="k">컨센 대비</div><div class="v up">$152B 상회</div></div>
+          <div class="metric"><div class="k">초점</div><div class="v"><small>Azure 성장률</small></div></div>
+          <div class="metric"><div class="k">상태</div><div class="v"><small>발표 전</small></div></div>
+        </div>
+        <p><span class="note-label">Watch</span>Azure AI 매출 기여, capex 대비 클라우드 수익화 속도, OpenAI 관련 코멘트.</p>
+      </div>
+
+      <div class="card">
+        <div class="card-top"><div><h4>Meta</h4><span class="tick">META · 07/29</span></div><span class="chip pend">🕒 발표 전</span></div>
+        <div class="metrics">
+          <div class="metric"><div class="k">2026 Capex</div><div class="v">$115–145B</div></div>
+          <div class="metric"><div class="k">방향</div><div class="v up">상향</div></div>
+          <div class="metric"><div class="k">초점</div><div class="v"><small>광고 + AI</small></div></div>
+          <div class="metric"><div class="k">상태</div><div class="v"><small>발표 전</small></div></div>
+        </div>
+        <p><span class="note-label">Watch</span>메모리價·DC 비용 반영한 capex 상향 폭, 광고 매출 견조함이 AI 투자 재원을 감당하는지.</p>
+      </div>
+
+      <div class="card">
+        <div class="card-top"><div><h4>Amazon</h4><span class="tick">AMZN · 07/30</span></div><span class="chip pend">🕒 발표 전</span></div>
+        <div class="metrics">
+          <div class="metric"><div class="k">2026 Capex</div><div class="v">~$200B</div></div>
+          <div class="metric"><div class="k">AWS 성장</div><div class="v">+28% <small>(Q1)</small></div></div>
+          <div class="metric"><div class="k">Q1 집행</div><div class="v">$44.2B</div></div>
+          <div class="metric"><div class="k">상태</div><div class="v"><small>발표 전</small></div></div>
+        </div>
+        <p><span class="note-label">Watch</span>AWS 재가속 여부·백로그, 리테일 마진, 자체 실리콘(Trainium) 진척.</p>
+      </div>
+
+      <div class="card">
+        <div class="card-top"><div><h4>Apple</h4><span class="tick">AAPL · 07/30</span></div><span class="chip pend">🕒 발표 전</span></div>
+        <div class="metrics">
+          <div class="metric"><div class="k">초점</div><div class="v"><small>iPhone·서비스</small></div></div>
+          <div class="metric"><div class="k">AI</div><div class="v"><small>Apple Intelligence</small></div></div>
+          <div class="metric"><div class="k">Capex</div><div class="v"><small>상대적 소규모</small></div></div>
+          <div class="metric"><div class="k">상태</div><div class="v"><small>발표 전</small></div></div>
+        </div>
+        <p><span class="note-label">Watch</span>하이퍼스케일러 대비 capex 부담 낮음. 서비스 마진·중국 수요·AI 기능 채택률이 관전 포인트. 메모리 수요 연결고리는 상대적으로 약함.</p>
+      </div>
+
+      <div class="card">
+        <div class="card-top"><div><h4>Tesla</h4><span class="tick">TSLA · 07/23</span></div><span class="chip pend">🕒 발표 전</span></div>
+        <div class="metrics">
+          <div class="metric"><div class="k">초점</div><div class="v"><small>인도량·마진</small></div></div>
+          <div class="metric"><div class="k">AI</div><div class="v"><small>FSD·로보틱스</small></div></div>
+          <div class="metric"><div class="k">메모리 연결</div><div class="v"><small>낮음</small></div></div>
+          <div class="metric"><div class="k">상태</div><div class="v"><small>발표 전</small></div></div>
+        </div>
+        <p><span class="note-label">Watch</span>Mag7 편입 종목이나 메모리 테마와는 거리. 자동차 마진·에너지·로보택시/FSD 진척 위주.</p>
+      </div>
+
+      <div class="card wide">
+        <div class="card-top">
+          <div><h4>Nvidia</h4><span class="tick">NVDA · ~08/26 (시즌 마지막 확인점)</span></div>
+          <span class="chip pend">🕒 발표 전</span>
+        </div>
+        <div class="metrics" style="grid-template-columns:repeat(4,1fr)">
+          <div class="metric"><div class="k">발표 시점</div><div class="v">8월 하순</div></div>
+          <div class="metric"><div class="k">초점</div><div class="v"><small>데이터센터·Blackwell</small></div></div>
+          <div class="metric"><div class="k">메모리 연결</div><div class="v up">최상</div></div>
+          <div class="metric"><div class="k">상태</div><div class="v"><small>발표 전</small></div></div>
+        </div>
+        <p><span class="note-label">Watch</span>분기 시차로 가장 늦게 발표 → 이번 AI 사이클의 <b>최종 확인 포인트</b>. 데이터센터 매출·가이던스, HBM 공급 병목 언급, Blackwell 램프업이 삼성·하이닉스 HBM 수요를 직접 규정.</p>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ============ INSIGHTS ============ -->
+  <section id="insights">
+    <div class="sec-head"><span class="sec-num">04</span><h3>DD 시사점 (연결고리)</h3></div>
+    <div class="insights">
+      <div class="insight"><span class="n">1</span><div class="txt"><b>사이클이 실제 작동 중.</b> 빅테크 Capex(+77%) → HBM/DRAM 수요 → 삼성·하이닉스 사상 최대 실적. 지식 컷오프(2026-01) 이후 슈퍼사이클이 예상보다 강하게 전개(삼성 OP 89조는 역사적 이례치).</div></div>
+      <div class="insight"><span class="n">2</span><div class="txt"><b>"정점(peak-out)" 논쟁이 핵심 리스크.</b> 삼성이 사상 최대에도 −7% 하락 → 시장은 이미 다음 국면(공급 확대→가격 정상화, capex 지속성)을 선반영 중.</div></div>
+      <div class="insight"><span class="n">3</span><div class="txt"><b>HBM 비즈니스 모델 차이.</b> LTA 고정가는 하방 방어(안정)에 유리하나 단기 상승 국면 상방 제한(SK하이닉스). 삼성은 일반 DRAM 스팟 노출이 커 이번 급등 수혜가 컸음.</div></div>
+      <div class="insight"><span class="n">4</span><div class="txt"><b>확인 순서.</b> 7/22 Alphabet → 7/29~30 MS/Meta/Amazon/Apple → 8/26 Nvidia. capex 가이던스 유지·상향 여부가 하반기 메모리 투자 판단의 1차 변수. Nvidia가 최종 확인점.</div></div>
+    </div>
+  </section>
+
+  <!-- ============ CHANGELOG ============ -->
+  <section id="log">
+    <div class="sec-head"><span class="sec-num">05</span><h3>업데이트 로그</h3></div>
+    <p class="sec-sub">발표될 때마다 이 문서가 갱신됩니다. 각 갱신은 아래에 기록됩니다.</p>
+    <div class="log">
+      <div class="log-item">
+        <div class="ver">v2026Q2-0.1 <span>2026-07-21 · 초안</span></div>
+        <p>CY2026 Q2 트래커 개설. 삼성전자 잠정실적(발표 완료) 반영, SK하이닉스·미국 빅테크 프리뷰/가이던스 정리. 캘린더·Capex 테마·DD 시사점 수록.</p>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <div><b>데이터 기준일:</b> 2026-07-21 · <b>단위:</b> 영업이익/매출 = 조원(KRW), Capex = USD · 발표 전 수치는 컨센서스/가이던스</div>
+    <div class="srcs">
+      <b style="color:var(--ink); margin-top:8px;">Sources</b>
+      <a href="https://www.cnbc.com/2026/07/07/samsung-electronics-preliminary-second-quarter-profit-hits-fresh-high.html">CNBC — Samsung Q2 preliminary profit hits fresh high</a>
+      <a href="https://finance.yahoo.com/markets/stocks/articles/samsung-q2-2026-earnings-record-112138779.html">Yahoo Finance — Samsung Q2 2026: Record profit, stock falls 7%</a>
+      <a href="https://www.investing.com/news/company-news/samsung-electronics-forecasts-q2-operating-profit-of-894trn-won-93CH-4778312">Investing.com — Samsung forecasts Q2 OP of 89.4trn won</a>
+      <a href="https://www.kucoin.com/news/flash/sk-hynix-q2-profit-seen-at-60-70-trillion-won-on-ai-memory-demand">KuCoin — SK Hynix Q2 profit seen at 60–70trn won</a>
+      <a href="https://www.tomshardware.com/tech-industry/big-tech/big-techs-ai-spending-plans-reach-725-billion">Tom's Hardware — Big Tech AI spending $725B in 2026 (+77%)</a>
+      <a href="https://www.marketbeat.com/articles/alphabets-ai-spending-question-looms-over-q2-earnings/">MarketBeat — Alphabet Q2 earnings preview (July 22)</a>
+    </div>
+    <p class="disc">본 문서는 공개된 언론·리서치 보도를 요약한 투자 참고용 자료이며, 개별 종목 매매 권유나 투자자문이 아닙니다. 발표 전 수치는 추정치로 실제와 다를 수 있으며, 확정 실적 발표 시 교체됩니다.</p>
+  </footer>
+
+</div>
