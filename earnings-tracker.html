@@ -1,3 +1,15 @@
+<script>
+/* 캐시 무력화: 열 때마다 최신본을 강제로 불러온다. 5분 이내 새로고침은 통과(루프 방지). */
+(function () {
+  try {
+    var u = new URL(location.href);
+    var t = parseInt(u.searchParams.get("_cb") || "0", 10);
+    if (t && (Date.now() - t) < 300000) return;   // 최근 5분 내면 그대로 표시
+    u.searchParams.set("_cb", String(Date.now())); // 매 세션 고유값 → 캐시 우회
+    location.replace(u.toString());
+  } catch (e) { /* 실패 시 아무것도 하지 않음 */ }
+})();
+</script>
 <title>2026 어닝 트래커 · AI Capex ↔ HBM/메모리</title>
 <style>
   :root {
