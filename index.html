@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+  <meta http-equiv="Pragma" content="no-cache">
+  <meta http-equiv="Expires" content="0">
+  <title>2026 어닝 트래커 · AI Capex ↔ HBM/메모리</title>
+  <style>
+    :root { color-scheme: light dark; }
+    html, body { margin: 0; }
+    body { font-family: -apple-system, "Segoe UI", Roboto, "Malgun Gothic", "Apple SD Gothic Neo", system-ui, sans-serif; background: #F5F7FA; }
+    @media (prefers-color-scheme: dark) { body { background: #0B0D13; } }
+    #loading { padding: 56px 24px; text-align: center; color: #888FA3; font-size: 14px; }
+    #loading .spin { width: 26px; height: 26px; margin: 0 auto 14px; border: 3px solid rgba(128,128,128,.25); border-top-color: #7A87FF; border-radius: 50%; animation: sp .8s linear infinite; }
+    @keyframes sp { to { transform: rotate(360deg); } }
+    #err { padding: 40px 24px; color: #CE3B3B; font-size: 14px; text-align: center; }
+    #err a { color: #3B44D8; }
+  </style>
+</head>
+<body>
+  <div id="loading"><div class="spin"></div>최신본 불러오는 중…</div>
+  <script>
+    /* 영구 링크용 로더: 열 때마다 최신 earnings-tracker.html을 캐시 우회로 로드한다.
+       - fetch에 고유 타임스탬프 쿼리 + no-store → 브라우저·CDN 캐시 모두 우회
+       - bfcache(뒤로가기/앱 탭 복원) 시 pageshow(persisted)로 다시 로드 → 모바일에서도 항상 최신 */
+    (function () {
+      function render(html) {
+        document.body.innerHTML = html;
+        var m = html.match(/<title>([^<]*)<\/title>/i);
+        if (m) document.title = m[1];
+        // 삽입된 <script>가 있으면 실행되지 않으므로 재구성 (현재 리포트엔 없음, 안전차원)
+        var scripts = document.body.querySelectorAll("script");
+        scripts.forEach(function (old) {
+          var s = document.createElement("script");
+          for (var i = 0; i < old.attributes.length; i++) s.setAttribute(old.attributes[i].name, old.attributes[i].value);
+          s.textContent = old.textContent;
+          old.parentNode.replaceChild(s, old);
+        });
+      }
+      function load() {
+        fetch("earnings-tracker.html?_=" + Date.now(), { cache: "no-store" })
+          .then(function (r) { if (!r.ok) throw new Error("HTTP " + r.status); return r.text(); })
+          .then(render)
+          .catch(function (e) {
+            document.body.innerHTML =
+              '<div id="err">최신본을 불러오지 못했습니다 (' + e.message + ').<br>' +
+              '잠시 후 <a href="javascript:location.reload()">새로고침</a> 해주세요.</div>';
+          });
+      }
+      load();
+      window.addEventListener("pageshow", function (e) { if (e.persisted) load(); });
+    })();
+  </script>
+</body>
+</html>
