@@ -94,6 +94,12 @@
   .chip.pend { background: var(--pend-soft); color: var(--pend); }
   .chip.neu  { background: var(--accent-soft); color: var(--accent); }
 
+  /* 핵심 강조 — 노란색 하이라이트 (테마 대응) */
+  .hl-y { background-color: #FCE38A; color: #111420; padding: 0 3px; border-radius: 3px; font-weight: 700; box-decoration-break: clone; -webkit-box-decoration-break: clone; }
+  @media (prefers-color-scheme: dark) { .hl-y { background-color: rgba(232,182,64,.26); color: #F4E9C6; } }
+  :root[data-theme="dark"] .hl-y { background-color: rgba(232,182,64,.26); color: #F4E9C6; }
+  :root[data-theme="light"] .hl-y { background-color: #FCE38A; color: #111420; }
+
   /* Section */
   section { margin-top: 56px; scroll-margin-top: 72px; }
   .sec-head { display: flex; align-items: baseline; gap: 12px; border-bottom: 2px solid var(--ink); padding-bottom: 10px; margin-bottom: 6px; }
@@ -211,7 +217,7 @@
   <!-- ============ THEME: CAPEX ============ -->
   <section id="capex">
     <div class="sec-head"><span class="sec-num">01</span><h3>핵심 테마 · 빅테크 AI Capex</h3></div>
-    <p class="sec-sub">4대 하이퍼스케일러 2026년 설비투자 합산 <b>≈$725B, 전년 대비 +77%</b>(2025 $410B). 이 투자가 곧 삼성·SK하이닉스 HBM/DRAM 수요의 원천이며, 이번 시즌의 최대 관전 포인트는 "이 지출이 지속 가능한가"입니다.</p>
+    <p class="sec-sub">4대 하이퍼스케일러 2026년 설비투자 합산 <b class="hl-y">≈$725B, 전년 대비 +77%</b>(2025 $410B). 이 투자가 곧 삼성·SK하이닉스 HBM/DRAM 수요의 원천이며, 이번 시즌의 최대 관전 포인트는 "이 지출이 지속 가능한가"입니다.</p>
     <div class="table-scroll">
       <table>
         <thead><tr><th>기업</th><th class="num">2026 Capex 가이던스</th><th class="num">2025 대비</th><th>메모</th></tr></thead>
@@ -243,7 +249,7 @@
           <div class="metric"><div class="k">매출 (잠정)</div><div class="v">~171조원</div></div>
           <div class="metric"><div class="k">컨센 대비</div><div class="v">OP 상회 / 매출 소폭 하회</div></div>
         </div>
-        <p><span class="note-label">Comment</span>3개 분기 연속 최대. 이 한 분기 영업이익이 2023–2025년 합계를 상회, 분기 OP 기준 엔비디아·애플 일시 추월. HBM4·SOCAMM2 세계 최초 양산 출하 개시.</p>
+        <p><span class="note-label">Comment</span><span class="hl-y">3개 분기 연속 최대</span>. 이 한 분기 영업이익이 2023–2025년 합계를 상회, 분기 OP 기준 엔비디아·애플 일시 추월. HBM4·SOCAMM2 세계 최초 양산 출하 개시.</p>
         <p><span class="note-label">주가 반응</span><b style="color:var(--neg)">−7%</b> — 연초 이후 ~150% 급등에 호재 선반영("perfection priced in"), 매출 미스, 향후 capex·AI 지속성 우려. 시총 $80B+ 증발.</p>
         <ul class="pts"><li>7/30 확정 컨콜: 부문별(메모리/파운드리/DX)·하반기 가이던스 확인 필요</li></ul>
       </div>
@@ -259,7 +265,7 @@
           <div class="metric"><div class="k">영업이익률(컨센)</div><div class="v">~76.5%</div></div>
           <div class="metric"><div class="k">상태</div><div class="v"><small>발표 전 · 7/29 확정</small></div></div>
         </div>
-        <p><span class="note-label">관전 포인트 · HBM의 양날</span>장기공급계약(LTA) <b>고정가</b> 구조 → 일반 DRAM(+~30% QoQ)·NAND(+~50%) 급등분을 blended ASP에 온전히 반영 못 함. "컨센 하회" 하향 리포트에 주가 하루 −12% 급락 사례. 단기 가격탄력성↓ 대신 장기 공급 안정성↑.</p>
+        <p><span class="note-label">관전 포인트 · HBM의 양날</span>장기공급계약(LTA) <b class="hl-y">고정가</b> 구조 → 일반 DRAM(+~30% QoQ)·NAND(+~50%) 급등분을 blended ASP에 온전히 반영 못 함. "컨센 하회" 하향 리포트에 주가 하루 −12% 급락 사례. 단기 가격탄력성↓ 대신 장기 공급 안정성↑.</p>
       </div>
 
     </div>
@@ -282,7 +288,7 @@
           <div class="metric"><div class="k">Q2 Capex</div><div class="v">$44.9B</div></div>
           <div class="metric"><div class="k">2026 Capex 가이던스</div><div class="v up">$195–205B <small>↑상향</small></div></div>
         </div>
-        <p><span class="note-label">Comment · AI Capex 상향</span>매출 컨센($117B) 상회. <b>Cloud +82%</b>로 예상(+63%)을 크게 웃돌며 백로그(~$460B+) 매출 전환 확인. FY26 capex를 <b>≤$190B→$195–205B로 재상향</b>, 2027년 "significant increase" 예고, CFO "여전히 <b>supply-constrained</b>". → HBM/DRAM 수요 상방 시그널.</p>
+        <p><span class="note-label">Comment · AI Capex 상향</span>매출 컨센($117B) 상회. <b class="hl-y">Cloud +82%</b>로 예상(+63%)을 크게 웃돌며 백로그(~$460B+) 매출 전환 확인. FY26 capex를 <b class="hl-y">≤$190B→$195–205B로 재상향</b>, 2027년 "significant increase" 예고, CFO "여전히 <b>supply-constrained</b>". → HBM/DRAM 수요 상방 시그널.</p>
         <p><span class="note-label">주가 반응</span>EPS $9.11(+294%)은 equity 평가이익 $98B 일회성 반영 → 실질 EPS로 해석 주의. capex 재상향에 컨콜 중 상승분 반납·차익실현 압력.</p>
       </div>
 
@@ -338,7 +344,7 @@
           <div class="metric"><div class="k">조정 EPS</div><div class="v down">$0.33 <small>(컨센 $0.51 미스)</small></div></div>
           <div class="metric"><div class="k">영업이익률</div><div class="v down">1.4% <small>(전 4.1%)</small></div></div>
         </div>
-        <p><span class="note-label">Comment</span>매출·인도량은 <b>사상 최대 2분기</b>(2년만의 YoY 인도 증가), TTM 매출 첫 $100B 돌파. 그러나 GAAP 영업이익 $398M(<b>−57%</b>)로 수익성 부진. FSD 구독 1.48M(+56%). Capex +142%($5.79B) 급증에 FCF −$1.09B 적자 전환.</p>
+        <p><span class="note-label">Comment</span>매출·인도량은 <b class="hl-y">사상 최대 2분기</b>(2년만의 YoY 인도 증가), TTM 매출 첫 $100B 돌파. 그러나 <b class="hl-y">GAAP 영업이익 $398M(−57%)</b>로 수익성 부진. FSD 구독 1.48M(+56%). Capex +142%($5.79B) 급증에 FCF −$1.09B 적자 전환.</p>
         <p><span class="note-label">메모리 연결</span><small>낮음</small> — Mag7이나 HBM 테마와는 거리. AI 관련은 FSD·로보틱스·Dojo 축.</p>
       </div>
 
@@ -363,10 +369,10 @@
   <section id="insights">
     <div class="sec-head"><span class="sec-num">04</span><h3>DD 시사점 (연결고리)</h3></div>
     <div class="insights">
-      <div class="insight"><span class="n">1</span><div class="txt"><b>사이클이 실제 작동 중.</b> 빅테크 Capex(+77%) → HBM/DRAM 수요 → 삼성·하이닉스 사상 최대 실적. 지식 컷오프(2026-01) 이후 슈퍼사이클이 예상보다 강하게 전개(삼성 OP 89조는 역사적 이례치).</div></div>
-      <div class="insight"><span class="n">2</span><div class="txt"><b>"정점(peak-out)" 논쟁이 핵심 리스크.</b> 삼성이 사상 최대에도 −7% 하락 → 시장은 이미 다음 국면(공급 확대→가격 정상화, capex 지속성)을 선반영 중.</div></div>
-      <div class="insight"><span class="n">3</span><div class="txt"><b>HBM 비즈니스 모델 차이.</b> LTA 고정가는 하방 방어(안정)에 유리하나 단기 상승 국면 상방 제한(SK하이닉스). 삼성은 일반 DRAM 스팟 노출이 커 이번 급등 수혜가 컸음.</div></div>
-      <div class="insight"><span class="n">4</span><div class="txt"><b>첫 확인점 통과 — 신호는 "상향".</b> Alphabet(7/22)이 Cloud +82%·FY26 capex $195–205B 재상향으로 <b>포문을 열었다</b>. 남은 순서: 7/29 MS·Meta·SK하이닉스 → 7/30 Apple·Amazon·삼성 → ~8/26 Nvidia. capex 유지·상향 지속 여부가 하반기 메모리 판단의 1차 변수, Nvidia가 최종 확인점.</div></div>
+      <div class="insight"><span class="n">1</span><div class="txt"><b class="hl-y">사이클이 실제 작동 중.</b> 빅테크 Capex(+77%) → HBM/DRAM 수요 → 삼성·하이닉스 사상 최대 실적. 지식 컷오프(2026-01) 이후 슈퍼사이클이 예상보다 강하게 전개(삼성 OP 89조는 역사적 이례치).</div></div>
+      <div class="insight"><span class="n">2</span><div class="txt"><b class="hl-y">"정점(peak-out)" 논쟁이 핵심 리스크.</b> 삼성이 사상 최대에도 −7% 하락 → 시장은 이미 다음 국면(공급 확대→가격 정상화, capex 지속성)을 선반영 중.</div></div>
+      <div class="insight"><span class="n">3</span><div class="txt"><b class="hl-y">HBM 비즈니스 모델 차이.</b> LTA 고정가는 하방 방어(안정)에 유리하나 단기 상승 국면 상방 제한(SK하이닉스). 삼성은 일반 DRAM 스팟 노출이 커 이번 급등 수혜가 컸음.</div></div>
+      <div class="insight"><span class="n">4</span><div class="txt"><b class="hl-y">첫 확인점 통과 — 신호는 "상향".</b> Alphabet(7/22)이 Cloud +82%·FY26 capex $195–205B 재상향으로 <b>포문을 열었다</b>. 남은 순서: 7/29 MS·Meta·SK하이닉스 → 7/30 Apple·Amazon·삼성 → ~8/26 Nvidia. capex 유지·상향 지속 여부가 하반기 메모리 판단의 1차 변수, Nvidia가 최종 확인점.</div></div>
     </div>
   </section>
 
